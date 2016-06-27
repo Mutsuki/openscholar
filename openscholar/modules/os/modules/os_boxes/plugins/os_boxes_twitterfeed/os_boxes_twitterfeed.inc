@@ -33,6 +33,7 @@ class os_boxes_twitterfeed extends os_boxes_default {
     $options['followme_text'] = t("Follow me on twitter");
     $options['followme_url'] = '';
     $options['twitter_type'] = 'Username';
+    $options['exclude_retweets'] = 0;
 
     return $options;
   }
@@ -48,7 +49,6 @@ class os_boxes_twitterfeed extends os_boxes_default {
       '#required' => TRUE,
       '#default_value' => $this->options['twitter_type'],
       '#options' => array('user' => t('Username'), 'hashtag' => t('Hashtag Topic'), 'search' => t('Search Term')),
-      '#attached' => array('js' => array(drupal_get_path('module', 'os_boxes') . '/plugins/os_boxes_twitterfeed/os_boxes_twitterfeed.js')),
       '#title' => t('Display tweets from'),
     );
 
@@ -68,6 +68,13 @@ class os_boxes_twitterfeed extends os_boxes_default {
       '#title' => t('Number of tweets'),
       '#default_value' => $this->options['num_items'],
       '#description' => t('Number of tweets to display')
+    );
+
+    $form['exclude_retweets'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Exclude re-tweets'),
+      '#default_value' => $this->options['exclude_retweets'],
+      '#description' => t('This will remove re-tweets from the tweet list and might result in fewer being displayed'),
     );
 
     $form['followme_link'] = array(
@@ -126,8 +133,6 @@ class os_boxes_twitterfeed extends os_boxes_default {
 
     if (($block['content'] = $this->get_cache()) === FALSE) {
       $twitkey = $this->options['twitter_username'];
-      $num_items = $this->options['num_items'];
-      $followme_link = $this->options['followme_link'];
 
       if ($twitkey[0] != '@' || $twitkey[0] != '#') {
         switch($this->options['twitter_type']) {
@@ -141,11 +146,11 @@ class os_boxes_twitterfeed extends os_boxes_default {
         }
       }
 
-      $output = twitter_pull_render($twitkey, $title = NULL, $num_items);
+      $output = twitter_pull_render($twitkey, $title = NULL, $this->options['num_items'], NULL, FALSE, $this->options['exclude_retweets']);
 
       // Appends a followme link.
       if ($this->options['followme_link']) {
-        $output .= '<div class="twitter-followme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
+        $output .= '<div class="twitter-fol  lowme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
       }
 
       $block['content'] = $output;
