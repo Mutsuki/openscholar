@@ -150,7 +150,7 @@ class os_boxes_twitterfeed extends os_boxes_default {
 
       // Appends a followme link.
       if ($this->options['followme_link']) {
-        $output .= '<div class="twitter-fol  lowme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
+        $output .= '<div class="twitter-followme">' . l($this->options['followme_text'], $this->options['followme_url']) . '</div>';
       }
 
       $block['content'] = $output;
