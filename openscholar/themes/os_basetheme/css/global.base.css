@@ -563,6 +563,7 @@ ul ul ul ul {
 .sidebar .block-boxes-os_boxes_facetapi_vocabulary .item-list {
     margin-bottom: 15px;
 }
+.sidebar .block-boxes-os_boxes_facetapi_vocabulary.collapsible .item-list,
 .sidebar .block-boxes-os_boxes_facetapi_vocabulary .item-list:last-chld {
     margin-bottom: 0;
 }

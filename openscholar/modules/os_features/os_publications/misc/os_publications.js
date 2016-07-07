@@ -64,6 +64,14 @@ Drupal.behaviors.osPublications = {
       if (this.value != '') {
         // Empty year field.
         yearField[0].value = '';
+        if($("#edit-field-biblio-pub-month-und").length) {
+          $('#edit-field-biblio-pub-month-und').val('_none');
+          $('#s2id_edit-field-biblio-pub-month-und span:first').text('Month');
+        }
+        if($("#edit-field-biblio-pub-day-und").length) {
+          $('#edit-field-biblio-pub-day-und').val('_none');
+          $('#s2id_edit-field-biblio-pub-day-und span:first').text('Day');
+        }
       }
     });
   }

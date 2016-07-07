@@ -9,6 +9,8 @@
  */
 class spaces_controller_menus extends spaces_controller {
 
+  protected $menuLinks = array();
+
   /**
    * Set override values for a given controller object in this space.
    */
@@ -127,7 +129,7 @@ class spaces_controller_menus extends spaces_controller {
     }
 
     $links = array();
-    foreach ( $menu_links as $mlid => $ml ) {
+    foreach ($menu_links as $mlid => $ml) {
       // Check for special case where menu link is hidden in tree.
       if ($ml['hidden'] < 0) {
         continue;
@@ -136,13 +138,16 @@ class spaces_controller_menus extends spaces_controller {
       // May not return data if it is an external link
       $item = $this->get_router_data($ml['router_path']);
 
-      if (is_array($item))
+      if (is_array($item)) {
         $ml = array_merge($item, $ml);
+      }
 
-      $links[] = $ml;
+      $links[$ml['mlid']] = $ml;
     }
 
-    $data['tree'] = menu_tree_data($links);
+    $this->menuLinks = $this->prepareMenuTree($links);
+    $data['tree'] = $this->menuBuildTree($this->menuLinks[1], 1);
+
     $data['node_links'] = array();
     menu_tree_collect_node_links($data['tree'], $data['node_links']);
 
@@ -150,6 +155,65 @@ class spaces_controller_menus extends spaces_controller {
     cache_set($cid, $data, 'cache_menu');
 
     return $data;
+  }
+
+  /**
+   * Prepare the flat menu links array into a group depths level representation
+   * and the links parent mlid from the previous depth.
+   */
+  protected function prepareMenuTree($links) {
+    $depths = array();
+
+    foreach ($links as $link) {
+
+      if ($link['depth'] > 1) {
+        $depths[$link['depth']][$link['plid']][$link['mlid']] = $link;
+      }
+      else {
+        $depths[$link['depth']][$link['mlid']] = $link;
+      }
+    }
+
+    return $depths;
+  }
+
+  /**
+   * Iterate over the menu links and create a sub menu tree ready for processing
+   * into HTML.
+   *
+   * @param $menu_links
+   *   The current level links and the number of depth.
+   * @param $depth
+   *   The current level of the menu.
+   *
+   * @return array
+   */
+  protected function menuBuildTree($menu_links, $depth) {
+    $links = [];
+
+    foreach ($menu_links as $item => $menu_link) {
+      $next_depth = $depth + 1;
+
+      $below = array();
+
+      $fix_depth = isset($this->menuLinks[$next_depth + 1][$menu_link['mlid']]);
+      if ($fix_depth) {
+        // In case we took a sub menu and move it one level down, the sub menus
+        // of that menu are still in the previous depth.
+        $next_depth++;
+      }
+
+      if (isset($this->menuLinks[$next_depth][$menu_link['mlid']])) {
+        $below = $this->menuBuildTree($this->menuLinks[$next_depth][$menu_link['mlid']], $next_depth);
+      }
+
+      $links[$menu_link['mlid']] = array(
+        'link' => $menu_link + array('in_active_trail' => FALSE),
+        'below' => $below,
+      );
+    }
+
+    return $links;
   }
 
   /**
@@ -201,7 +265,7 @@ class spaces_controller_menus extends spaces_controller {
 
     $result = array();
     foreach ($links as $mlid => $link) {
-      if(in_array($link['plid'], $parents) && !in_array($mlid, $parents)){
+      if (in_array($link['plid'], $parents) && !in_array($mlid, $parents)) {
         $result[$mlid] = $link;
       }
     }

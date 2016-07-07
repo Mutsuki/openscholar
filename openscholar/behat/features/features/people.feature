@@ -42,11 +42,11 @@ Feature:
             listener node updated.
     Given I am logging in as "john"
       And I edit the node "Hillary Diane Rodham Clinton" in the group "obama"
-     When I fill in "Address" with ""
+     When I fill in "Address" with "new address"
       And I press "Save"
       And I sleep for "10"
       And I visit "john/people/hillary-diane-rodham-clinton"
-     Then I should not see "White house"
+     Then I should not see "new address"
 
   @api @features_second
   Scenario: Make sure that when a source node is deleted the copied node becomes

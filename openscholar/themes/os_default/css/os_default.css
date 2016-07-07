@@ -284,6 +284,7 @@ background-size: 60px 60px;
     background: #FF3A2D;
 }
 .pin-button a,
+#edit-login, #edit-back,
 fieldset.pin-fieldset legend a,
 #user-login fieldset legend a,
 .page-site-register .form-submit,
@@ -299,6 +300,11 @@ fieldset.pin-fieldset legend a,
     -moz-border-radius: 4px;
     border-radius: 4px;
     background: #3b76b1;
+}
+.pin-button-inline {
+    display: inline-block;
+    width: 100px;
+    margin: 0 3px 0 0;
 }
 .logged-in.no-sidebars.page-user #content .add-subsite a {
     color: #FFFFFF;

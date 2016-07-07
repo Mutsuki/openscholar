@@ -218,6 +218,18 @@ function _os_publications_plain_citation($node) {
   }
 
   if (variable_get('biblio_citeproc_style') == 'harvard-chicago-author-date.csl') {
+
+    // Pushing day and month in those both are present in Publication for Harvard - Chicago Author cititation
+    if (!empty($node->biblio_year) && strpos($citation, $node->biblio_year.'. ') !== FALSE && !empty($node->field_biblio_pub_month['und'][0]['value'])) {
+      // In case day value is present
+      if(!empty($node->field_biblio_pub_day['und'][0]['value'])) {
+        $day = $node->field_biblio_pub_day['und'][0]['value'] . '/';
+      } else {
+        $day = '';
+      }
+      $citation = str_replace($node->biblio_year . '. ', $node->field_biblio_pub_month['und'][0]['value'] . '/' . $day . $node->biblio_year . '. ', $citation);
+    }
+
     $fields = array(
       103 => array(
         'biblio_date' => 'Date Presented',

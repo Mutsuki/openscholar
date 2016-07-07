@@ -598,13 +598,12 @@ function os_process_node(&$vars) {
   // Only proceeds if we have a "Read more" link.
   if (!isset($vars['content']['links']['node']['#links']['node-readmore'])) {
     return;
-  } else {
-    $vars['content']['links']['node']['#links']['node-readmore']['attributes']['class'][] = 'node-readmore';
   }
 
   // Hides the "Read more" link if there is no body value.
   $body_items = field_get_items('node', $vars['node'], 'body');
   if ($body_items === FALSE) {
+    unset($vars['content']['links']['node']['#links']['node-readmore']);
     return;
   }
 
@@ -636,9 +635,17 @@ function os_process_node(&$vars) {
     module_load_include('inc', 'os', 'includes/os');
     $link = $vars['content']['links']['node']['#links']['node-readmore'];
     $link['attributes']['class'][] = 'node-readmore';
+    // Get last position of the last closing marker in teaser.
+    if (preg_match('!</?(?:p)[^>]*>\s*$!i', $vars['content']['body'][0]['#markup'], $match, PREG_OFFSET_CAPTURE)) {
+      $insert_point = $match[0][1];
+      // Insert the link.
+      $vars['content']['body'][0]['#markup'] = substr_replace($vars['content']['body'][0]['#markup'], ' '.l($link['title'], $link['href'], $link), $insert_point, 0);
+    }
 
-    _os_insert_link_into_paragraph($vars['content']['body'][0]['#markup'], $link);
   }
+
+  // Hide the original "Read more" link by removing it from the render array.
+  unset($vars['content']['links']['node']['#links']['node-readmore']);
 }
 
 /**
@@ -2112,20 +2119,39 @@ function os_form_user_login_alter(&$form, $form_state) {
   // Overriding the text of first button on the login screen.
   if (isset($form['pin'])) {
     $query['destination'] = isset($_GET['destination']) ? $_GET['destination'] : 'user';
-    $form['pin']['#markup'] = l('Log in with Harvard credentials', 'user/pin', array('query' => $query));
+    $form['pin']['#markup'] = l('Log in using your Harvard Key', 'user/pin', array('query' => $query));
   }
 
   // If user login form is overridden by pinserver_authenticate module, then $form['pin-fieldset'] will be initialized from there.
   // $form['name'] and $form['pass'] both will be unset from pinserver_authenticate module
   if (isset($form['pin-fieldset'])) {
-    $form['pin-fieldset']['#title'] = t('Log in with your OpenScholar account');
-    $form['pin-fieldset']['name']['#title'] = t('Username / E-Mail');
+    //unset($form['pin-fieldset']['#title']);
+    $form['pin-fieldset']['name']['#title'] = t('OpenScholar Username / E-Mail');
     $form['pin-fieldset']['pass']['#description'] = t('!request', array('!request' => l('Forgot your password?', 'user/password')));
+    $form['pin-fieldset']['pass']['#title'] = "OpenScholar Password";
+
+    $form['pin-fieldset']['login'] = array(
+        '#type' => 'submit',
+        '#value' => t('Log in'),
+        '#attributes' => array('class' => array('pin-button-inline')),
+    );
+    $form['pin-fieldset']['back'] = array(
+        '#type' => 'button',
+        '#value' => t('Back'),
+        '#suffix' => '</a>',
+        '#attributes' => array(
+            'class' => array('pin-button-inline'),
+            'onclick' => "window.history.back()",
+        ),
+    );
+
+    unset($form['pin-fieldset']['name']['#description']);
+    unset($form['pin-fieldset']['actions']['submit']);
   }
 
   // If pinserver_authenticate module is not overriding login form, then $form['name'] and $form['pass'] will not be unset.
   if (isset($form['name']) && isset($form['pass'])) {
-    $form['name']['#title'] = t('Username / E-Mail');
+    $form['name']['#title'] = t('OpenScholar Username / E-Mail');
     unset($form['pass']['#description']);
   }
 }

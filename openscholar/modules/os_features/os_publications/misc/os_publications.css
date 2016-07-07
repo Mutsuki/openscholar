@@ -47,7 +47,7 @@ a.cite-pop {
 }
 
 
-#edit-biblio-year-coded, .form-item-biblio-year-coded, .form-item-biblio-year {
+#edit-biblio-year-coded, .form-item-biblio-year-coded, .form-item-biblio-year, #edit-field-biblio-pub-month, .form-item-field-biblio-pub-month-und, #edit-field-biblio-pub-day, .form-item-field-biblio-pub-day-und {
   display: inline;
 }
 

@@ -437,19 +437,19 @@ background-color: #f3f3f1 !important;
 background-color: #e3e3e1 !important;
 }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
 	font-weight: bold;
 }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul,
 .block-boxes-os_taxonomy_fbt.navigation ul {
     border-bottom: 1px solid #959595;
     border-left: 1px solid #959595;
     border-right: 1px solid #959595;
   }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul li,
 .block-boxes-os_taxonomy_fbt.navigation ul li {
 	border-top: 1px solid #959595;
 }

@@ -21,6 +21,9 @@ class os_boxes_rand_widget extends os_boxes_widget_collection {
     $box = boxes_box_load($delta);
     $box->title = $this->options['widgets'][$k]['title'];
     $box->options['make_embeddable'] = $this->options['make_embeddable'];
+    if (!empty($this->options['additional_class'])) {
+      $this->options['additional_classes'] = $this->options['additional_class'];
+    }
     if ($box instanceof boxes_box) {
       return $box->render();
     }

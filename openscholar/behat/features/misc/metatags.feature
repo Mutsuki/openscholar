@@ -13,7 +13,7 @@ Feature:
       And I fill in "Meta description" with "custom tag value"
       And I press "Save"
      Then I visit "john/about"
-      And I should see the meta tag "description" with value "custom tag value"
+      And I should see the meta tag "og:description" with value "custom tag value"
 
   @api @misc_second
   Scenario: Testing metatags settings form in a personal site.

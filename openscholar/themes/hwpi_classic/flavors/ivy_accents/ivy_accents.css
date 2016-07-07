@@ -72,24 +72,24 @@ border-top-right-radius: 3px;
 .section-nav .menu-depth-1 > a {
     background: none repeat scroll 0 0 #52854C !important;
 }
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
 	font-family:georgia;
 	}
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
 	font-family: 'Roboto',Baskerville, arial;
 	}
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation .block-content,
 .block-boxes-os_taxonomy_fbt.navigation .block-content {
 	padding:0;
 	}
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation h2.block-title,
 .block-boxes-os_taxonomy_fbt.navigation h2.block-title {
 	margin-bottom: 0;
 	}
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul,
 .block-boxes-os_taxonomy_fbt.navigation ul {
 border-bottom: none;
 border-left: none;

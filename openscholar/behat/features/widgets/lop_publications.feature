@@ -13,7 +13,7 @@ Feature:
      When I visit "john/publications"
      Then I should see the publication "John F. Kennedy: A Biography" comes before "Goblet of Fire" in the LOP widget
 
-  @api @widgets
+  @api @wip
   Scenario: Verify that the List of posts widget shows publications in the order
             of Year and then by sticky.
     Given I am logging in as "john"
@@ -26,7 +26,7 @@ Feature:
      Then I should see the publication "John F. Kennedy: A Biography" comes before "Chamber of Secrets" in the LOP widget
       And I should see the publication "Chamber of Secrets" comes before "Goblet of Fire" in the LOP widget
 
-  @api @widgets
+  @api @wip
   Scenario: Verify that the List of posts widget shows publications in the order
             of Year and then by sticky and then by created.
     Given I am logging in as "john"

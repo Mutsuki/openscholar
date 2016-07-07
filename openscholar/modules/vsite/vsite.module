@@ -184,7 +184,7 @@ function vsite_user_admin_roles($variables) {
       'content editor',
       'vsite admin',
       'vsite user',
-	  'viewer',
+    'viewer',
     );
 
     if (in_array($rid, array(DRUPAL_ANONYMOUS_RID, DRUPAL_AUTHENTICATED_RID)) || in_array($name, $role_names)) {
@@ -775,7 +775,6 @@ function vsite_vsite_exists_access($vsites = array()) {
     // If the domain is NOT the purl base domain, alerts user and denies access.
     if ($base_url != $purl_base_domain) {
       drupal_set_message(t('You may not register new sites on custom domains.'), 'warning');
-
       return FALSE;
     }
   }
@@ -2056,7 +2055,7 @@ function vsite_form_user_profile_form_alter(&$form, &$form_state, &$form_id){
       'content editor',
       'vsite admin',
       'vsite user',
-	  'viewer',
+    'viewer',
     );
     foreach ($role_names  as $role_name) {
       $role = user_role_load_by_name($role_name);
@@ -2209,6 +2208,16 @@ function vsite_menu(){
     'access callback' => 'vsite_delete_request_access',
     'access arguments' => array(3),
     'description' => t('Delete VSite'),
+  );
+
+  // Delete multiple vsites form
+  $items['admin/config/openscholar/vsite/delete'] = array(
+    'type' => MENU_CALLBACK,
+    'title' => t('Delete Multiple Vsites'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vsite_delete_multiple_vsites_form'),
+    'access arguments' => array('delete vsite'),
+    'description' => t('Delete multiple vsites via form input or file upload.'),
   );
 
   return $items;
@@ -2712,7 +2721,7 @@ function vsite_preprocess_toolbar(&$vars){
  */
 function vsite_os_settings_subsites_form_submit($form, &$form_state){
 
-	variable_set('subsite_bundles',array_filter($form_state['values']['subsite_bundles']));
+  variable_set('subsite_bundles',array_filter($form_state['values']['subsite_bundles']));
   variable_set('subsite_parents',array_filter($form_state['values']['subsite_parents']));
 
   foreach (array_filter($form_state['values']['subsite_bundles']) as $subsite_type){
@@ -3854,4 +3863,169 @@ function vsite_os_restful_entity_delete_data($entity_type, $entity) {
     }
 
   return $data;
+}
+
+/**
+ * Delete multiple vsites form.
+ */
+function vsite_delete_multiple_vsites_form($form, &$form_state) {
+  // only allow user 1 to access functionality
+  global $user;
+  if ($user->uid != 1) {
+    drupal_access_denied();
+    drupal_exit();
+  }
+
+  // if vsite ids have already been inputted, go to confirm form
+  if (isset($form_state['storage']['confirm'])) {
+    return vsite_delete_multiple_vsites_confirm($form_state);
+  }
+
+  $form['title'] = array(
+    '#markup' => '<h2>' . t('Vsite IDs') . '</h2>',
+  );
+
+  $form['instructions'] = array(
+    '#markup' => '<p>' . t('If IDs are in the text field and an uploaded file, both will be processed.') . '</p>',
+  );
+
+  $form['id_textfield'] = array(
+    '#type' => 'textarea',
+    '#description' => t('Expected format is a list of comma-delimited numbers'),
+  );
+
+  $form['id_upload'] = array(
+    '#title' => t('Upload file'),
+    '#type' => 'managed_file',
+    '#description' => t('Expected format is one ID per line'),
+  );
+
+  $form['submit'] = array(
+    '#value' => t('Submit'),
+    '#type' => 'submit',
+  );
+
+  return $form;
+}
+
+/**
+ * Delete multiple vsites submit function.
+ */
+function vsite_delete_multiple_vsites_form_submit($form, &$form_state) {
+  // if this is after the user first submits the vsite IDs
+  if ($form_state['clicked_button']['#id'] == 'edit-submit') {
+    // check that text field has correclty formatted list of ID numbers
+    if ($form_state['values']['id_textfield']) {
+      $clean_list = _vsite_cleanup_id_list(explode(',', $form_state['values']['id_textfield']));
+      if (in_array('0', $clean_list)) {
+        drupal_set_message(t('The text field contained invalid values') . '; <a href="/admin/config/openscholar/vsite/delete">' . t('go back to the form') . '</a>.', 'error');
+        return FALSE;
+      }
+      $form_state['storage']['vsite_ids'] = $clean_list;
+    }
+
+    // check that file has correclty formatted list of ID numbers
+    if ($form_state['values']['id_upload'] && !is_array($form_state['values']['id_upload'])) {
+      $upload = file_load($form_state['values']['id_upload']);
+      $upload_mime = mime_content_type(drupal_realpath($upload->uri));
+      if ($upload_mime == 'text/plain') {
+        $upload_contents = file_get_contents(drupal_realpath($upload->uri));
+        $clean_list = _vsite_cleanup_id_list(explode("\n", $upload_contents));
+
+        if (in_array('0', $clean_list)) {
+          drupal_set_message(t('The uploaded file contained invalid values') . '; <a href="/admin/config/openscholar/vsite/delete">' . t('go back to the form') . '</a>.', 'error');
+          return FALSE;
+        }
+        if (isset($form_state['storage']['vsite_ids'])) {
+          $form_state['storage']['vsite_ids'] = array_merge($clean_list, $form_state['storage']['vsite_ids']);
+        }
+        else {
+          $form_state['storage']['vsite_ids'] = $clean_list;
+        }
+        // remove file now that the contents have been processed
+        file_delete($upload);
+      }
+      else {
+        drupal_set_message(t('Please upload a plain text file; the file you uploaded was of type "') . $upload_mime . '; <a href="/admin/config/openscholar/vsite/delete">' . t('go back to the form') . '</a>.', 'error');
+        return FALSE;
+      }
+    }
+
+    // set things up for the next step
+    $form_state['storage']['confirm'] = TRUE;
+    $form_state['rebuild'] = TRUE;
+  }
+  // otherwise, IDs have been checked and user has confirmed
+  else {
+    // delete those vsites
+    node_delete_multiple($form_state['storage']['vsite_ids']);
+    drupal_set_message(t('The vsites you listed have been deleted.'), 'status');
+  }
+}
+
+/**
+ * Delete multiple vsites confirm function.
+ */
+function vsite_delete_multiple_vsites_confirm(&$form_state) {
+  if(!($form_state['storage']['vsite_ids'])) {
+    drupal_set_message(t('No vsite IDs were found')  . '; <a href="/admin/config/openscholar/vsite/delete">' . t('go back to the form') . '</a>.', 'error');
+    return FALSE;
+  }
+
+  $form['vsite_name'] = array(
+    '#title' => t('Warning! You are about to delete multiple sites!'),
+    '#description' => t('Enter the word DELETE to delete all of the entered sites.'),
+    '#type' => 'textfield',
+    '#required' => TRUE,
+    '#element_validate' => array('vsite_delete_vsite_confirm_title'),
+  );
+
+  $form['confirm'] = array(
+    '#value' => t('Confirm'),
+    '#type' => 'submit',
+  );
+
+  $form['vsite_list'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Vsites to be deleted'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+
+  $vsite_name_list = array();
+  foreach ($form_state['storage']['vsite_ids'] as $vid) {
+    $result = db_query('SELECT title FROM {node} WHERE nid = :vid', array(':vid' => $vid));
+    if ($vsite_id = $result->fetchColumn(0)) {
+      $vsite_name_list[] = $vsite_id;
+    }
+    else {
+      drupal_set_message(t('There is no existing vsite with an id of ') . $vid . '; <a href="/admin/config/openscholar/vsite/delete">' . t('go back to the form') . '</a>.', 'error');
+      return FALSE;
+    }
+  }
+
+  $form['vsite_list']['content'] = array(
+    '#markup' => '<ul><li>' . implode('</li><li>', $vsite_name_list) . '</li></ul>',
+  );
+
+  return $form;
+}
+
+/**
+ * Helper function to find vsite IDs that are not valid (not all digits)
+ * and return with an array containing only '0' if found
+ */
+
+function _vsite_cleanup_id_list($vsite_id_array) {
+  $clean_array = array();
+  foreach ($vsite_id_array as $id) {
+    $id = trim($id);
+    if (preg_match('/\D/', $id, $matches)) {
+      return array('0');
+    }
+    else {
+      $clean_array[] = intval($id);
+    }
+  }
+  return $clean_array;
 }

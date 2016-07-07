@@ -581,7 +581,7 @@ ul.class_material_field_class a.class_material_field_class_anchor {
 .block-boxes-os_search_solr_more_like_this .item-list ul li,
 .block-boxes-os_sv_list_box .item-list ul li,
 .block-boxes .block-boxes-os_boxes_manual_list ul li {
-    margin-bottom: .75em;
+    margin-bottom: .9em;
 }
 /*
  * First sidebar (on left in LTR languages, on right in RTL)

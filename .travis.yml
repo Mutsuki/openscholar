@@ -19,7 +19,7 @@ env:
     - TEST_SUITE=restful
     - TEST_SUITE=features_first
     - TEST_SUITE=features_second
-    - TEST_SUITE=harvard
+#    - TEST_SUITE=harvard
     - TEST_SUITE=javscript
     - TEST_SUITE=misc_first
     - TEST_SUITE=misc_second
@@ -47,8 +47,6 @@ before_script:
 
   # Install bower
   - npm install -g bower
-
-  # Install angular testing utlities
 
   # Set up the lincoln virtual domain.
   - sudo service apache2 restart
@@ -98,7 +96,7 @@ before_script:
   # Migrate, enable harvard courses and index data.
   - drush en os_migrate_demo os_reports -y
   - drush mi --all --user=1
-  - drush en harvard_courses -y
+#  - drush en harvard_courses -y
   - drush cc all
   - drush search-index
 

@@ -10,8 +10,8 @@ body {
 }
 
 /* Show infinite scrolling after login */
-.front body {
-overflow-x: hidden;
+body.front {
+    overflow-y: hidden;
 }
 #page-wrapper {
     background: none repeat scroll 0 0 #F3F3F1;
@@ -710,6 +710,7 @@ padding: 20px 0;
 /** SECTION NAV **/
 
 .section-nav a,
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
 	color: #6C6C6C;
 	font-weight: bold;
@@ -752,26 +753,26 @@ padding: 20px 0;
 background-color: #f3f3f1 !important;
 }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation,
 .block-boxes-os_taxonomy_fbt.navigation {
 border-top: none;
 }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation h2,
 .block-boxes-os_taxonomy_fbt.navigation h2 {
 	border-top: 4px solid #A51C30;
 	padding-top:12px;
 }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul,
 .block-boxes-os_taxonomy_fbt.navigation ul {
 	border-top: 4px solid #A51C30;
 }
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation h2 ~ .block-content ul,
 .block-boxes-os_taxonomy_fbt.navigation h2 ~ .block-content ul {
 	border-top: none !important;
 }
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul,
 .block-boxes-os_taxonomy_fbt.navigation ul {
 border-bottom: none;
 border-left: none;

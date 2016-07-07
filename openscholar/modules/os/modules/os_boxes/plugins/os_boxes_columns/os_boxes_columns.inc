@@ -5,6 +5,7 @@ class os_boxes_columns extends os_boxes_default {
   public function options_defaults() {
     return array(
       'layout' => 'three-3x33',
+      'additional_class' => '',
       'widgets' => array(
         'region-1' => '',
         'region-2' => '',
@@ -22,6 +23,17 @@ class os_boxes_columns extends os_boxes_default {
       '#type' => 'container',
       '#id' => 'os-boxes-columns-layout-select'
     );
+
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      $form['additional_class'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Apply css class name to this widget\'s container'),
+        '#description' => t('Warning: this is to be used for custom themeing purposes only.'),
+        '#default_value' => (isset($this->options['additional_class'])) ? $this->options['additional_class'] : '',
+        '#access' => og_user_access('node', $vsite->group->nid, 'add widget custom class', NULL, FALSE, TRUE),
+        '#weight' => 9002,
+      );
+    }
 
     /*
     $form['layout_select']['num_cols'] = array(

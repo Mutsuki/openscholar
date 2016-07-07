@@ -244,7 +244,32 @@ function _vsite_menu_prepare_menu_item(&$item, $vsite) {
       $existing_menu[$existing_item['plid']]['has_children'] = count($remaining_children)?1:0;
     }
 
+    // Fixing the menu depths. In some cases when dragging the menu under
+    // another menu and that menu is a parent menu then the depth of the child
+    // and the father will be same. This will cause the menu tree to break.
+    _vsite_menu_prepare_menu_item_fix_depth($existing_menu, $item);
+
     return array($menu, $existing_menu);
+  }
+}
+
+/**
+ * Fixing depth of parent menu child and father.
+ *
+ * @param $items
+ *   The elements in the menu tree.
+ * @param $menu_item
+ *   A father menu item.
+ */
+function _vsite_menu_prepare_menu_item_fix_depth(&$items, $menu_item) {
+  foreach ($items as $item) {
+    if (($item['plid'] == $menu_item['mlid']) && $items[$item['mlid']]['depth'] == $items[$menu_item['mlid']]['depth']) {
+      $items[$item['mlid']]['depth']++;
+
+      // Recurse the function but in this case the child item is the father
+      // item.
+      _vsite_menu_prepare_menu_item_fix_depth($items, $items[$item['mlid']]);
+    }
   }
 }
 

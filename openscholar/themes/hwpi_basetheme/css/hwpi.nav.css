@@ -233,32 +233,34 @@ ul.nice-menu ul {
 	background-color: #E6E6E3 !important;
 }
 
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a.active,
 .block-boxes-os_taxonomy_fbt.navigation a.active,
 .section-nav a.active {
 	color: #333;
 }
 
 /* TAXONOMY AS NAVIGATION BASE STYLES*/
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
 	color: #215990;
 	}
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a:hover,
 .block-boxes-os_taxonomy_fbt.navigation a:hover {
     background-color: #e3e3e1;
   
 }
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul li, 
 .block-boxes-os_taxonomy_fbt.navigation ul li {
     background-color: #FFF;
   }
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul,
 .block-boxes-os_taxonomy_fbt.navigation ul {
     border-bottom: 1px solid #EBE3DF;
     border-left: 1px solid #EBE3DF;
     border-right: 1px solid #EBE3DF;
   }
 
-
+.block-boxes-os_boxes_facetapi_vocabulary.navigation ul li,
 .block-boxes-os_taxonomy_fbt.navigation ul li {
 	border-top: 1px solid #EBE3DF;
 }

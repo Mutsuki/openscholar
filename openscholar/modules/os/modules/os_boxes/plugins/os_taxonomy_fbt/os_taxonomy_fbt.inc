@@ -33,6 +33,7 @@ class os_taxonomy_fbt extends os_boxes_default {
     $options['depth'] = 0;
     $options['behavior'] = 'contextual';
     $options['as_nav'] = FALSE;
+    $options['additional_class'] = '';
 
     return $options;
   }
@@ -66,6 +67,17 @@ class os_taxonomy_fbt extends os_boxes_default {
         ),             
        ),
     );
+
+    if (module_exists('vsite') && $vsite = vsite_get_vsite()) {
+      $form['additional_class'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Apply css class name to this widget\'s container'),
+        '#description' => t('Warning: this is to be used for custom themeing purposes only.'),
+        '#default_value' => (isset($this->options['additional_class'])) ? $this->options['additional_class'] : '',
+        '#access' => og_user_access('node', $vsite->group->nid, 'add widget custom class', NULL, FALSE, TRUE),
+        '#weight' => 9002,
+      );
+    }
 
     return $form;
   }

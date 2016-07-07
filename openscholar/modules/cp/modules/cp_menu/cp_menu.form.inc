@@ -134,9 +134,7 @@ function cp_menu_build_form($form, $form_state, $menu = ''){
     )
   );
 
-  $form['#submit'] = array(
-    'cp_menu_submit_form'
-  );
+  $form['#submit'] = array('cp_menu_submit_form');
 
   return $form;
 }
@@ -269,19 +267,21 @@ function theme_cp_menu_table($variables){
   ));
 }
 
-function cp_menu_submit_form($form, &$form_state){
+function cp_menu_submit_form($form, &$form_state) {
 
-  //Save as normal
+  // Save as normal.
   foreach ($form_state['values']['menus'] as $links) {
+
     foreach ($links as $l) {
-      if (! is_array($l))
+      if (!is_array($l)) {
         continue;
+      }
 
       $l['menu_name'] = $l['menu'];
       $link = os_menu_link_load($l['mlid'], $l['menu-old']);
 
       $modified = false;
-      foreach (array('weight', 'menu_name', 'plid') as $param ) {
+      foreach (array('weight', 'menu_name', 'plid', 'depth') as $param) {
         //Has this menu links parameters been modified?
         if ($link[$param] != $l[$param]) {
           $modified = true;

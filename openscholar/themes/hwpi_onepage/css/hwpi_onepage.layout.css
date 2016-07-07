@@ -113,3 +113,9 @@
 .front .block-boxes-os_boxes_columns .block-boxes-os_sv_list_box .node {
     width: 100%;
 }
+.content-left.content-right .region-content-first .region-inner, 
+.front .content-left.content-bottom .region-content-first .region-inner, 
+.front .content-right.content-bottom .region-content-second .region-inner, 
+.front .content-left.content-right.content-bottom .region-content-second .region-inner {
+    border-right: none;
+}

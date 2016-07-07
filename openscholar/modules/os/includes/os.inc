@@ -276,16 +276,3 @@ function os_create_node($title, $type, $uid, $body = NULL, $options = array()) {
   return $node;
 }
 
-
-/*
- * Insert a link into the ending paragraph tag
- */
-function _os_insert_link_into_paragraph(&$str, $link) {
-
-  if (preg_match('!</?(?:p)[^>]*>\s*$!i', $str, $match, PREG_OFFSET_CAPTURE)) {
-    $insert_point = $match[0][1];
-    // Insert the link.
-    $str = substr_replace($str, ' '.l($link['title'], $link['href'], $link), $insert_point, 0);
-  }
-}
-

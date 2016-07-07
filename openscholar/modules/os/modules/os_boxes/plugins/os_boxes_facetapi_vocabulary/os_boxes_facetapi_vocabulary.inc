@@ -118,15 +118,14 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
     );
 
     $form['as_nav'] = array(
-      '#type' => 'checkbox',
-      '#default_value' => $as_nav,
-      '#title' => t('Display as a menu'),
-      '#return_value' => TRUE,
-      '#states' => array(
-       'invisible' => array(
-        ':input[name="widget_type"]' => array('value' => 'select'),
-        ),
-       ),
+      '#type' => 'radios',
+      '#title' => t('Display Styles'),
+      '#default_value' => empty($as_nav) ? 0 : $as_nav,
+      '#options' => array(
+        0 => t('Classic/List'),
+        1 => t('Menu'),
+        2 => t('Collapsible Accordion')
+      ),
     );
 
     return $form;
@@ -313,19 +312,49 @@ class os_boxes_facetapi_vocabulary extends os_boxes_default {
               array_sort_by_term_weight($block['content']['sm_og_vocabulary'][$vocabulary_name]['#items'], $vocabulary_name);
             }
           }
+        }        
+        // Initializing jQuery UI Accordion for this widget instance if display style is set as "Collapsible"
+        if ($this->options['as_nav'] == 2) {
+          $block['content']['#prefix'] = '<div class="accordion">';
+          $block['content']['#suffix'] = '</div>';
+          $block['content']['#attached'] = array(
+            'library' => array(
+              array('system', 'ui.accordion'),
+            ),
+            'js' => array(
+              drupal_get_path('module', 'os_boxes') . '/plugins/os_boxes_facetapi_vocabulary/os_boxes_facetapi_vocabulary_accordion.render.js',
+              array(
+                'type' => 'setting',
+                'data' => array(
+                  'os_boxes' => array(
+                    'faceted_taxonomy' => array(
+                      $this->delta => array(
+                        'delta' => $this->delta,
+                      )
+                    )
+                  )
+                )
+              ),
+            ),
+          );
         }
 
         $block['content'] = render($block['content']);
-        if ($this->options['show_count'] == FALSE && $this->options['as_nav']) {
-          // If "Show number of posts" is off "but Display as a menu is" on
-          $this->options['additional_classes'] = 'hide-count navigation';
-        } elseif ($this->options['show_count'] == FALSE) {
-          // If both "Show number of posts" and "but Display as a menu is" are off
-          $this->options['additional_classes'] = 'hide-count';
-        } elseif ($this->options['as_nav']) {
-          // If both "Show number of posts" and "but Display as a menu is" are on
-          $this->options['additional_classes'] = 'navigation';
+
+        $additional_classes = array();
+        if ($this->options['show_count'] == FALSE) {
+          $additional_classes[] = 'hide-count';
         }
+        if ($this->options['as_nav'] == 1) {
+          $additional_classes[] = 'navigation';
+        } elseif ($this->options['as_nav'] == 2) {
+          $additional_classes[] = 'collapsible';
+        }
+
+        if (!empty($additional_classes)) {
+          $this->options['additional_classes'] = implode(" ", $additional_classes);
+        }
+
         if ($use_cache) {
           $this->set_cache($block);
         }

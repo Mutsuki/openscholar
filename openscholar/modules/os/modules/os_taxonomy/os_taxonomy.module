@@ -2084,7 +2084,7 @@ function os_taxonomy_cp_settings() {
     ),
     'form' => array(
       '#type' => 'checkbox',
-      '#title' => t('Display terms under content'),
+      '#title' => t('Display terms under content on a page'),
       '#default_value' => $default_value,
     ),
     'submit' => array(

@@ -466,6 +466,23 @@ function os_boxes_preprocess_block(&$vars) {
   if (web_widgets_inside_widget()) {
     $vars['classes_array'][] = 'os-boxes-embedded';
   }
+  // Custom css class as entered in widget settings page.
+  if (!empty($vars['elements']['#block']->additional_class)) {
+    $vars['classes_array'][] = $vars['elements']['#block']->additional_class;
+  }
+}
+
+/**
+ * Implements hook_og_permission().
+ */
+function os_boxes_og_permission() {
+  return array(
+    'add widget custom class' => array(
+      'title' => t('Add specific css class names to widgets'),
+      'description' => t('For custom theming purposes only.'),
+      'os_override' => TRUE,
+    ),
+  );
 }
 
 /**

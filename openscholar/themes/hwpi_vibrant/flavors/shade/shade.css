@@ -352,6 +352,7 @@ ul.nice-menu-down li ul li ul {
     border-width: 1px;
     box-shadow: 0 0;
 }
+.block-boxes-os_boxes_facetapi_vocabulary.navigation a,
 .block-boxes-os_taxonomy_fbt.navigation a {
     font-weight: normal;
 }

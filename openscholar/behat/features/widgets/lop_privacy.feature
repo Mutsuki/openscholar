@@ -1,7 +1,7 @@
 Feature:
   Verify that privacy of bundles is respected in the LOP widget.
 
-  @api @widgets
+  @api @wip
   Scenario: Verify that anonymous user can see public bundles in the LOP.
     Given I am logging in as "john"
       And the widget "All Posts" is set in the "News" page with the following <settings>:

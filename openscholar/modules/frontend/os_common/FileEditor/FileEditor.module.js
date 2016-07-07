@@ -240,6 +240,7 @@
    * de.rp.txt
    * derp.txt?mtime=garbage#herp
    * http://customdomain.com/sites/default/files/department/files/accordion_widget.png?m=1432822855
+   * http://hwpi.harvard.edu/os_fast/files/able/t-bill_rates.pdf  ((private files path))
    * derp.txt?mtime=gar.bage
    *
    * Tested with regexr.com
@@ -255,7 +256,7 @@
     // [a-zA-Z0-9.?#_-]+ matches against the filename without extension
     // ([a-zA-Z0-9]+) matches the extension itself
     // ($|[?#]) matches end of the string or a URL filename terminator (? or #)
-    var r = /^([a-z]+:\/\/[a-zA-Z0-9.\/-]+\/)?[a-zA-Z0-9.?#_-]+\.([a-zA-Z0-9]+)($|[?#])/,
+    var r = /^([a-z]+:\/\/[a-zA-Z0-9.\/_-]+\/)?[a-zA-Z0-9.?#_-]+\.([a-zA-Z0-9]+)($|[?#])/,
       result = r.exec(url);
 
     if (result) {

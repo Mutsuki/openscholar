@@ -64,12 +64,6 @@ function os_blog_process_node(&$vars) {
   $pubdate = format_date($vars['created'], 'custom', 'F j, Y');
   // Publication date, formatted with time element
   $vars['submitted'] = '<time datetime="' . $vars['datetime'] . '" pubdate="pubdate">' . $pubdate . '</time>';
-
-  // If the readmore link has already been inserted inline into the body,
-  // remove it from the render array, so it's not printed twice
-  if (preg_match("/\bnode-readmore\b/", $vars['content']['body'][0]['#markup'])) {
-    unset($vars['content']['links']['node']['#links']['node-readmore']);
-  }
 }
 
 /**

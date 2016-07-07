@@ -1279,10 +1279,7 @@ class FeatureContext extends DrupalContext {
    */
   public function iShouldSeeTheMetaTag($tag, $value) {
     $page = $this->getSession()->getPage();
-    if (!$text = $page->find('xpath', "//meta[@name='{$tag}']/@content")) {
-      throw new Exception("The meta tag {$tag} does not exist");
-    }
-    if ($text->getText() != $value) {
+    if (!$text = $page->find('xpath', "//meta[(@property='{$tag}' or @name='{$tag}') and @content='{$value}']")) {
       throw new Exception("The meta tag {$tag} value is not {$value}");
     }
   }

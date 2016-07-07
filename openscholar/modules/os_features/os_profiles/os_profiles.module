@@ -276,17 +276,11 @@ function os_profiles_os_entity_view_modes() {
  * Implements hook_process_node().
  */
 function os_profiles_process_node(&$vars) {
-
   if ($vars['type'] !== 'person') {
     return;
   }
 
   module_load_include('inc', 'os', 'includes/os');
-
-  if (isset($vars['content']['links']['node']['#links']['node-readmore'])) {
-    _os_insert_link_into_paragraph($vars['content']['pic_bio']['body'][0]['#markup'], $vars['content']['links']['node']['#links']['node-readmore']);
-  }
-  unset($vars['content']['links']['node']['#links']['node-readmore']);
 
   // Adding the prefix value to the title of the person.
   if (!empty($vars['field_prefix'])) {

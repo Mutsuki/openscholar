@@ -200,15 +200,15 @@ function os_publications_update_7002(){
  */
 function os_publications_update_7003() {
   if(!module_exists('biblio_citeproc')){
-  	return t('CiteProc not installed, update not needed.');
+    return t('CiteProc not installed, update not needed.');
   }
   $field_map = biblio_get_map('field_map','csl');
   if(isset($field_map['collection-title']) && isset($field_map['container-title'])) {
     if($field_map['collection-title'] == 'biblio_secondary_title' && $field_map['container-title'] == 'biblio_secondary_title') {
-	  $field_map['collection-title'] = '';
-	  biblio_set_map('field_map', 'csl', $field_map);
-	  return t('Second biblio_secondary_title field mapping removed.');
-	}
+    $field_map['collection-title'] = '';
+    biblio_set_map('field_map', 'csl', $field_map);
+    return t('Second biblio_secondary_title field mapping removed.');
+  }
   }
 }
 
@@ -217,7 +217,7 @@ function os_publications_update_7003() {
  */
 function os_publications_update_7004() {
   if(!db_table_exists('biblio_types')) {
-  	return;
+    return;
   }
 
   $result = db_select('biblio_types', 'b')
@@ -227,12 +227,12 @@ function os_publications_update_7004() {
     ->fetchField();
 
   if(empty($result)) {
-  	return;
+    return;
   }
 
   $delete_type = db_delete('biblio_types')
     ->condition('tid',$result)
-  	->execute();
+    ->execute();
 
   return t('Select Type... has been removed from the biblio_types table.');
 }
@@ -279,7 +279,7 @@ function os_publications_update_7005() {
  */
 function os_publications_update_7006() {
   if(!module_exists('biblio_citeproc')) {
-  	return;
+    return;
   }
 
   $dir = drupal_get_path('module', 'biblio_citeproc') . '/style';
@@ -334,17 +334,17 @@ function os_publications_update_7007() {
   // Before we wipe out all the other contributors, sanity check to make sure there are no rogue contributers attached to biblio nodes.
   $auth_type_check = db_query('SELECT nid, vid, cid, auth_type FROM {biblio_contributor} WHERE auth_type > :auth_id', array('auth_id' => 2))->fetchAll();
   if($auth_type_check) {
-  	// Set anything greater than 2 to 2 because they should be editors.
-  	foreach($auth_type_check as $auth => $type) {
-  	  $auth_type_update = db_update('biblio_contributor')
-  	    ->fields(array(
-  	      'auth_type' => 2,
-  	    ))
-  	    ->condition('nid', $type->nid, '=')
-  	    ->condition('vid', $type->vid, '=')
-  	    ->condition('cid', $type->cid, '=')
-  	    ->execute();
-  	}
+    // Set anything greater than 2 to 2 because they should be editors.
+    foreach($auth_type_check as $auth => $type) {
+      $auth_type_update = db_update('biblio_contributor')
+        ->fields(array(
+          'auth_type' => 2,
+        ))
+        ->condition('nid', $type->nid, '=')
+        ->condition('vid', $type->vid, '=')
+        ->condition('cid', $type->cid, '=')
+        ->execute();
+    }
   }
   // Delete all the other contributer types.
   $contributor_select = db_query('SELECT auth_type FROM {biblio_contributor_type_data} WHERE auth_type > :auth_id', array(':auth_id' => 2))->fetchAll();
@@ -1581,4 +1581,11 @@ function os_publications_update_7047() {
   }
 
   return t('Added \'import from file\' permission to '.$count.' roles.');
+}
+
+/**
+ * Add Day and Month of Publication fields.
+ */
+function os_profiles_update_7048() {
+  features_revert(array('os_publications' => array('field_base', 'field_instance')));
 }

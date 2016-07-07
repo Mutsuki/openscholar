@@ -675,12 +675,6 @@ function os_events_process_node(&$variables) {
     ));
     $variables['content']['field_date'][0]['#markup'] = str_replace($rule, '', $variables['content']['field_date'][0]['#markup'] );
   }
-
-  // If the readmore link has already been inserted inline into the body,
-  // remove it from the render array, so it's not printed twice
-  if (preg_match("/\bnode-readmore\b/", $vars['content']['body'][0]['#markup'])) {
-    unset($vars['content']['links']['node']['#links']['node-readmore']);
-  }
 }
 
 /**
@@ -2939,7 +2933,7 @@ function os_date_repeat_rrule_description($rrule, $format = 'D M d Y') {
   return t('Repeats !interval!bymonth!byday!count !until !except. !additional', $description);
 }
 
-/*
+/**
  * Implements hook_form_{form_id}_alter
  *
  * Fix destination for event deletion
@@ -2952,4 +2946,16 @@ function os_events_form_node_delete_confirm_alter($form) {
         $_GET['destination'] = $paths[$form['#node']->type];
     }
   }
+}
+
+/**
+ * Implements hook_field_create_field().
+ */
+function os_events_field_create_field($field) {
+  if ($field['field_name'] != 'field_date') {
+    return;
+  }
+
+  db_add_index('field_data_field_date', 'date_start', array('field_date_value'));
+  db_add_index('field_data_field_date', 'date_end', array('field_date_value2'));
 }
